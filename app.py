@@ -1,164 +1,207 @@
 import streamlit as st
 from groq import Groq
 
-# =========================
+# =========================================================
 # PAGE CONFIG
-# =========================
+# =========================================================
+
 st.set_page_config(
     page_title="AI Poster & Social Media Caption Maker",
     page_icon="✨",
     layout="wide"
 )
 
-# =========================
+# =========================================================
 # CUSTOM CSS
-# =========================
+# =========================================================
+
 st.markdown("""
 <style>
 
 .stApp {
-    background: linear-gradient(135deg, #eee5ff 0%, #d8c4f5 50%, #f5edff 100%);
+    background:
+        radial-gradient(circle at top left, #3b1763 0%, transparent 35%),
+        linear-gradient(135deg, #160b25 0%, #241035 50%, #12081d 100%);
 }
 
+/* Main Heading */
 .main-title {
     text-align: center;
-    font-size: 42px;
-    font-weight: 800;
-    color: #111111;
-    margin-top: 10px;
+    font-size: 46px;
+    font-weight: 900;
+    color: white !important;
+    margin-top: 15px;
     margin-bottom: 5px;
 }
 
 .subtitle {
     text-align: center;
     font-size: 18px;
-    color: #333333;
-    margin-bottom: 30px;
+    color: #e5d5f5 !important;
+    margin-bottom: 35px;
 }
 
+/* Cards */
 .card {
-    background: rgba(255,255,255,0.92);
-    padding: 25px;
-    border-radius: 22px;
-    box-shadow: 0 8px 30px rgba(70,40,100,0.15);
-    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.96);
+    padding: 28px;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    margin-bottom: 22px;
 }
 
-.result-card {
-    background: white;
-    padding: 30px;
-    border-radius: 22px;
-    box-shadow: 0 8px 30px rgba(50,30,80,0.18);
-    color: #111111;
-}
-
-.result-card h1,
-.result-card h2,
-.result-card h3,
-.result-card p,
-.result-card li {
+/* Card headings */
+.card h2,
+.card h3,
+.card p,
+.card label {
     color: #111111 !important;
+}
+
+/* Result */
+.result-card {
+    background: #ffffff;
+    padding: 35px;
+    border-radius: 25px;
+    box-shadow: 0 12px 45px rgba(0,0,0,0.35);
+    color: #111111 !important;
+}
+
+/* Make ALL result text black */
+.result-card,
+.result-card * {
+    color: #111111 !important;
+}
+
+/* Result headings */
+.result-card h1 {
+    font-size: 32px !important;
+    font-weight: 900 !important;
+    margin-top: 10px;
 }
 
 .result-card h2 {
-    font-size: 25px;
-    margin-top: 22px;
+    font-size: 26px !important;
+    font-weight: 850 !important;
+    margin-top: 30px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 8px;
 }
 
 .result-card h3 {
-    font-size: 20px;
+    font-size: 21px !important;
+    font-weight: 800 !important;
 }
 
-.stTextArea textarea {
-    background-color: white !important;
-    color: #111111 !important;
-    border-radius: 14px !important;
-    border: 2px solid #a875d6 !important;
+.result-card p,
+.result-card li {
+    font-size: 17px !important;
+    line-height: 1.8 !important;
 }
 
+/* Inputs */
+.stTextArea textarea,
 .stTextInput input {
-    background-color: white !important;
+    background-color: #ffffff !important;
     color: #111111 !important;
+    border: 2px solid #9b68c7 !important;
     border-radius: 14px !important;
-    border: 2px solid #a875d6 !important;
+    font-size: 16px !important;
 }
 
+/* Select boxes */
 .stSelectbox div {
     color: #111111 !important;
 }
 
+/* Button */
 div.stButton > button {
     width: 100%;
-    border-radius: 14px;
+    min-height: 52px;
+    border-radius: 15px;
     border: none;
-    padding: 13px;
-    font-size: 17px;
-    font-weight: 700;
-    background: linear-gradient(90deg, #7b2cbf, #a855d8);
-    color: white;
+    background: linear-gradient(90deg, #6d28a9, #9b4dcc);
+    color: white !important;
+    font-size: 18px;
+    font-weight: 800;
 }
 
 div.stButton > button:hover {
-    background: linear-gradient(90deg, #6a1fb0, #933fc4);
-    color: white;
+    background: linear-gradient(90deg, #812fc1, #b05ce0);
+    color: white !important;
 }
 
+/* Download button */
+.stDownloadButton button {
+    border-radius: 13px !important;
+    font-weight: 700 !important;
+}
+
+/* Divider */
+hr {
+    border-color: rgba(255,255,255,0.25) !important;
+}
+
+/* Footer */
 .footer {
     text-align: center;
-    color: #333333;
+    color: #e5d5f5 !important;
+    margin-top: 35px;
     font-size: 14px;
-    margin-top: 30px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
 
-# =========================
+# =========================================================
 # HEADER
-# =========================
+# =========================================================
+
 st.markdown(
     '<div class="main-title">✨ AI Poster & Social Media Caption Maker</div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
-    '<div class="subtitle">Create professional posters, captions and social media content with AI</div>',
+    '<div class="subtitle">Create detailed, professional and engaging social media content with AI</div>',
     unsafe_allow_html=True
 )
 
 
-# =========================
-# MAIN LAYOUT
-# =========================
-left, right = st.columns([1, 1])
+# =========================================================
+# TWO COLUMN LAYOUT
+# =========================================================
+
+left, right = st.columns([1, 1], gap="large")
 
 
-# =========================
-# LEFT SIDE - INPUT
-# =========================
+# =========================================================
+# LEFT SIDE
+# =========================================================
+
 with left:
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
-    st.markdown("### 📝 Tell AI About Your Content")
+    st.markdown("### 📝 Create Your Content")
 
     topic = st.text_area(
-        "What is your business, product, event or post about?",
+        "What is your content about?",
         placeholder=(
             "Example: New luxury beauty salon opening in Islamabad "
-            "with professional makeup, skincare and hair styling services."
+            "with makeup, skincare and hair styling services."
         ),
         height=180
     )
 
     business_name = st.text_input(
-        "Business / Brand Name",
+        "🏷️ Business / Brand Name",
         placeholder="Example: Glow Beauty Studio"
     )
 
     platform = st.selectbox(
-        "Choose Platform",
+        "📱 Select Platform",
         [
             "Instagram",
             "Facebook",
@@ -168,7 +211,7 @@ with left:
     )
 
     content_type = st.selectbox(
-        "Content Type",
+        "📌 Content Type",
         [
             "Social Media Caption",
             "Poster Content",
@@ -177,51 +220,67 @@ with left:
             "Event Promotion",
             "Sale / Discount",
             "New Product Launch",
-            "Educational Post"
+            "Educational Post",
+            "Special Announcement"
         ]
     )
 
     tone = st.selectbox(
-        "Choose Tone",
+        "🎨 Select Tone",
         [
             "Professional",
             "Modern",
             "Luxury",
             "Friendly",
             "Creative",
-            "Catchy"
+            "Catchy",
+            "Elegant"
         ]
     )
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
-# =========================
-# RIGHT SIDE - GENERATOR
-# =========================
+# =========================================================
+# RIGHT SIDE
+# =========================================================
+
 with right:
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
-    st.markdown("### ✨ Generate Your Content")
+    st.markdown("### ✨ AI Content Generator")
 
-    st.write(
-        "AI will create detailed content with headings, "
-        "descriptions, highlights, CTA and hashtags."
+    st.markdown(
+        """
+        **Your AI will create:**
+
+        • Attractive headline  
+        • Detailed caption  
+        • Business/product description  
+        • Key features  
+        • Main benefits  
+        • Target audience  
+        • Promotional message  
+        • Call to action  
+        • Hashtags  
+        • Short version  
+        """
     )
 
-    generate = st.button("✨ Generate AI Content")
+    generate = st.button("✨ Generate Detailed Content")
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
-# =========================
-# AI GENERATION
-# =========================
+# =========================================================
+# GENERATE
+# =========================================================
+
 if generate:
 
     if not topic.strip():
-        st.warning("⚠️ Please enter your business, product, event or post topic.")
+        st.warning("⚠️ Please enter your topic first.")
         st.stop()
 
     try:
@@ -231,9 +290,11 @@ if generate:
         client = Groq(api_key=api_key)
 
         prompt = f"""
-You are a professional social media content writer and marketing expert.
+You are a professional social media marketing expert,
+copywriter and content strategist.
 
-Create high-quality content based on the information below.
+Create detailed, attractive and professional social media
+content using the information below.
 
 TOPIC:
 {topic}
@@ -250,53 +311,117 @@ CONTENT TYPE:
 TONE:
 {tone}
 
-IMPORTANT INSTRUCTIONS:
 
-Do NOT give only one short paragraph.
+IMPORTANT:
 
-Create a detailed, professional and visually organized response.
+DO NOT give a short answer.
 
-Use CLEAR HEADINGS for every section.
+DO NOT give only one paragraph.
 
-The output must follow this structure:
+The response must be DETAILED.
 
-## HEADLINE
-Write a powerful and attractive headline.
+Use many clear headings.
 
-## MAIN CAPTION
-Write a detailed social media caption of around 100-150 words.
+Use bullet points where appropriate.
 
-## ABOUT
-Explain the business, product, event or topic in detail.
+Make the content professional, natural, engaging,
+modern and easy to understand.
 
-## KEY HIGHLIGHTS
-Give 5-6 useful bullet points.
 
-## BENEFITS
-Explain the main benefits or reasons people should choose this product, service or event.
+FOLLOW THIS STRUCTURE:
 
-## CALL TO ACTION
-Write a strong and attractive CTA.
 
-## HASHTAGS
-Give 8-12 relevant hashtags.
+# ✨ HEADLINE
 
-## SHORT VERSION
-Create a short version suitable for a quick social media post.
+Create a powerful and attractive headline.
 
-Make everything natural, professional, engaging and easy to understand.
 
-Do not mention these instructions.
-Do not add unnecessary explanations.
+# 📝 MAIN CAPTION
+
+Write a detailed social media caption around
+150-200 words.
+
+
+# 📖 ABOUT
+
+Explain the business, product, service, event
+or topic in detail.
+
+
+# 🌟 KEY FEATURES
+
+Give 5-7 important features in bullet points.
+
+
+# 💎 MAIN BENEFITS
+
+Give 5-7 benefits in bullet points.
+
+
+# 👥 TARGET AUDIENCE
+
+Explain who this content/product/service is for.
+
+
+# 🔥 WHY CHOOSE US
+
+Give 4-6 convincing reasons.
+
+
+# 🎯 PROMOTIONAL MESSAGE
+
+Write an attractive promotional paragraph.
+
+
+# 📢 CALL TO ACTION
+
+Write a strong CTA encouraging the audience
+to take action.
+
+
+# 💬 ENGAGEMENT QUESTION
+
+Add a question that encourages people to comment.
+
+
+# #️⃣ HASHTAGS
+
+Give 10-15 relevant hashtags.
+
+
+# ⚡ SHORT VERSION
+
+Create a short social media version around
+40-60 words.
+
+
+# 📌 POSTER TEXT
+
+Create short, powerful text that can be placed
+directly on a poster/design.
+
+
+# 💡 CONTENT IDEA
+
+Give one additional creative idea for this post.
+
+
+Make every section useful.
+
+Do not explain the instructions.
+
+Only provide the final content.
 """
-
 
         response = client.chat.completions.create(
             model="openai/gpt-oss-120b",
             messages=[
                 {
                     "role": "system",
-                    "content": "You are an expert social media marketing content creator."
+                    "content": (
+                        "You are an expert social media content "
+                        "creator and marketing strategist."
+                    )
                 },
                 {
                     "role": "user",
@@ -304,14 +429,15 @@ Do not add unnecessary explanations.
                 }
             ],
             temperature=0.7,
-            max_tokens=2200
+            max_tokens=3000
         )
 
         result = response.choices[0].message.content
 
-        # =========================
+        # =================================================
         # RESULT
-        # =========================
+        # =================================================
+
         st.markdown("---")
 
         st.markdown(
@@ -319,17 +445,18 @@ Do not add unnecessary explanations.
             unsafe_allow_html=True
         )
 
-        st.markdown("## ✨ Your AI Generated Content")
+        st.markdown("## ✨ AI Generated Content")
 
         st.markdown(result)
 
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # =========================
+        # =================================================
         # DOWNLOAD
-        # =========================
+        # =================================================
+
         st.download_button(
-            "⬇️ Download Content",
+            label="⬇️ Download Content",
             data=result,
             file_name="ai_social_media_content.txt",
             mime="text/plain"
@@ -337,20 +464,21 @@ Do not add unnecessary explanations.
 
     except Exception as e:
 
-        st.error(
-            "Something went wrong. Please check your Groq API key and try again."
-        )
+        st.error("❌ Something went wrong.")
 
         st.code(str(e))
 
 
-# =========================
+# =========================================================
 # FOOTER
-# =========================
+# =========================================================
+
 st.markdown(
     """
     <div class="footer">
-        ✨ AI Poster & Social Media Caption Maker • Create • Share • Grow
+        ✨ AI Poster & Social Media Caption Maker
+        <br>
+        Create • Promote • Grow
     </div>
     """,
     unsafe_allow_html=True
